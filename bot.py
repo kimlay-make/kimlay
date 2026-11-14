@@ -106,7 +106,18 @@ def send_menu(message):
 def capture_transactions(message):
     text = message.text or message.caption or ""
     # ពិនិត្យរកមើលពាក្យបញ្ជាក់ប្រាក់ចូលពីធនាគារ
-    if any(char.isdigit() for char in text):
+    # ស្វែងរកលេខដែលមានសញ្ញា ៛ ឬ $ នៅពីមុខ (សម្រាប់សារធនាគារ)
+match = re.search(r'(?:៛|\$)\s*([\d,]+(?:\.\d+)?)', text)
+
+if match:
+    amount = float(match.group(1).replace(',', ''))
+else:
+    # សម្រាប់វាយបញ្ចូលផ្ទាល់ដៃខ្លីៗ (ឧទាហរណ៍៖ 1000 ឬ 50000)
+    numbers = re.findall(r'[\d,]+(?:\.\d+)?', text)
+    # បើសារខ្លីជាង ៥០តួអក្សរ វាទាញយកលេខដំបូង តែបើសារវែងវាចាត់ទុកថាជាសារផ្សេង
+    amount = float(numbers[0].replace(',', '')) if len(text) < 50 and numbers else 0.0
+
+if amount > 0:
         # ទាញយកតួលេខទឹកប្រាក់ពីក្នុងសារ
        numbers = re.findall(r'\d+', text.replace(',', ''))
         amount = float(numbers[0]) if numbers else 0.0
