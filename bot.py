@@ -1,4 +1,21 @@
 import telebot
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import os
+
+class SimpleServer(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
+
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(('0.0.0.0', port), SimpleServer)
+    server.serve_forever()
+
+threading.Thread(target=run_server, daemon=True).start()
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from datetime import datetime, timedelta
 import calendar
