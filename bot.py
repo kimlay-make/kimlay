@@ -108,7 +108,7 @@ def capture_transactions(message):
     # ពិនិត្យរកមើលពាក្យបញ្ជាក់ប្រាក់ចូលពីធនាគារ
     if "ទទួលបាន" in text or "received" in text.lower() or "រៀល" in text or "$" in text:
         # ទាញយកតួលេខទឹកប្រាក់ពីក្នុងសារ
-        numbers = re.findall(r'\d[\d,]*\.?\d*', text.replace(',', ''))
+       numbers = re.findall(r'\d+', text.replace(',', ''))
         amount = float(numbers[0]) if numbers else 0.0
         
         # កត់ត្រាទុកក្នុងបញ្ជី
