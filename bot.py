@@ -105,26 +105,20 @@ def send_menu(message):
 @bot.message_handler(func=lambda message: True)
 def capture_transactions(message):
     text = message.text or message.caption or ""
-    # ពិនិត្យរកមើលពាក្យបញ្ជាក់ប្រាក់ចូលពីធនាគារ
+    
     # ស្វែងរកលេខដែលមានសញ្ញា ៛ ឬ $ នៅពីមុខ (សម្រាប់សារធនាគារ)
-match = re.search(r'(?:៛|\$)\s*([\d,]+(?:\.\d+)?)', text)
+    match = re.search(r'(?:៛|\$)\s*([\d,]+(?:\.\d+)?)', text)
+    
+    if match:
+        amount = float(match.group(1).replace(',', ''))
+    else:
+        # សម្រាប់វាយបញ្ចូលផ្ទាល់ដៃខ្លីៗ
+        numbers = re.findall(r'[\d,]+(?:\.\d+)?', text)
+        amount = float(numbers[0].replace(',', '')) if len(text) < 50 and numbers else 0.0
 
-if match:
-    amount = float(match.group(1).replace(',', ''))
-else:
-    # សម្រាប់វាយបញ្ចូលផ្ទាល់ដៃខ្លីៗ (ឧទាហរណ៍៖ 1000 ឬ 50000)
-    numbers = re.findall(r'[\d,]+(?:\.\d+)?', text)
-    # បើសារខ្លីជាង ៥០តួអក្សរ វាទាញយកលេខដំបូង តែបើសារវែងវាចាត់ទុកថាជាសារផ្សេង
-    amount = float(numbers[0].replace(',', '')) if len(text) < 50 and numbers else 0.0
-
-if amount > 0:
-        # ទាញយកតួលេខទឹកប្រាក់ពីក្នុងសារ
-       numbers = re.findall(r'\d+', text.replace(',', ''))
-        amount = float(numbers[0]) if numbers else 0.0
-        
-        # កត់ត្រាទុកក្នុងបញ្ជី
+    if amount > 0:
         transaction_history.append({
-           "date": datetime.now() + timedelta(hours=7),
+            "date": datetime.now() + timedelta(hours=7),
             "amount": amount,
             "text": text
         })
