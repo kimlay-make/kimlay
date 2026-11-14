@@ -113,14 +113,14 @@ def capture_transactions(message):
         
         # កត់ត្រាទុកក្នុងបញ្ជី
         transaction_history.append({
-            "date": datetime.now(),
+           "date": datetime.now() + timedelta(hours=7),
             "amount": amount,
             "text": text
         })
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
-    today = datetime.now()
+    today = datetime.now() + timedelta(hours=7)
 
     # --- ត្រឡប់មកម៉ឺនុយដើម ---
     if call.data == "back_to_menu":
